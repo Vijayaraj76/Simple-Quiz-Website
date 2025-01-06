@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, 
+                #FF6B6B,  /* Coral Red */
+                #4ECDC4,  /* Turquoise */
+                #FFE66D,  /* Sunny Yellow */
+                #6C5CE7,  /* Purple */
+                #A8E6CF,  /* Mint Green */
+                #FF8B94   /* Pink */
+            );
+            background-size: 300% 300%;
+            animation: gradientBG 20s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .quiz-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+            text-align: center;
+        }
+
+        .option:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .correct {
+            background-color: #9fff9f;
+            border-color: #28a745;
+        }
+
+        .wrong {
+            background-color: #ffa07a;
+            border-color: #dc3545;
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            font-size: 1.2em;
+            color: #2c3e50;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Berlin", "Paris", "Madrid"],
+                correct: 2
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                correct: 1
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const question = quizData[currentQuestion];
+            const options = document.getElementsByClassName('option');
+            
+            // Disable all options after selection
+            Array.from(options).forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+
+            if (selectedOption === question.correct) {
+                options[selectedOption].classList.add('correct');
+                score++;
+            } else {
+                options[selectedOption].classList.add('wrong');
+                options[question.correct].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        function showResult() {
+            const quizElement = document.getElementById('quiz');
+            const resultElement = document.getElementById('result');
+            
+            quizElement.style.display = 'none';
+            resultElement.style.display = 'block';
+            resultElement.textContent = `Quiz completed! Your score: ${score}/${quizData.length}`;
+        }
+
+        // Start the quiz
+        loadQuestion();
+    </script>
+</body>
+</html> 
